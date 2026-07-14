@@ -1,14 +1,23 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI
 from pydantic import BaseModel
-from typing import Union
-app = FastAPI()
-# items = ["ao" , "quan" , "mu" , "giay"]
-class Item(BaseModel):
-    name: str
-    price: float
-    description: Union[str, None] = None
+from typing import List
+app = FastAPI(title="Git Exercise Todo API")
+todo_list = []
 
-@app.post("/items/")
-def create_item(item: Item):
-    print(f"deta touroku: {item.name}, {item.price}, {item.description}")
-    return item
+class Todo(BaseModel):
+    id: int
+    title: str
+    completed: bool = False
+
+@app.get("/")
+def read_root():
+    return {"message": "Hello World"}
+
+@app.get("/todos", response_model=List[Todo])
+def get_todos():
+    return todo_list
+
+@app.post("/todos", response_model=Todo)
+def create_todo(todo: Todo):
+    todo_list.append(todo)
+    return todo
