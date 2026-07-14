@@ -1,0 +1,8 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.postman/
+postman/
+Untitled-1
+.env
