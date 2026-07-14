@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
 app = FastAPI(title="Git Exercise Todo API")
@@ -48,7 +48,7 @@ def update_todo(todo_id: int, todo_in: TodoCreate):
 
 @app.delete("/todos/{todo_id}")
 def delete_todo(todo_id: int):
-    for index,todo in enemuerate(todo_list):
+    for index,todo in enumerate(todo_list):
         if todo.id == todo_id:
             todo_list.pop(index)
             return {"message": f"Todo with id {todo_id} has been deleted successfully"}
