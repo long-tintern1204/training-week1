@@ -1,53 +1,64 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
+from app.database import Base, engine, get_db
+from app.models import Book
 
 app = FastAPI(title="Books API")
+Base.metadata.create_all(bind=engine)
 
 
-class Book(BaseModel):
+class BookCreate(BaseModel):
     title: str
     author: str
     year: int
 
 
-books: dict[int, Book] = {}
+@app.get("/")
+def root():
+    return {"message": "HELLO WORLD"}
 
 
 @app.get("/books")
-def list_books():
-    # TODO: trả về danh sách từ dict books
-    return list(books.values())
+def list_books(db: Session = Depends(get_db)):
+    return db.query(Book).all()
 
 
 @app.get("/books/{book_id}")
-def get_book(book_id: int):
-    # TODO: nếu không có book_id → raise HTTPException(status_code=404, detail="Book not found")
-    # TODO: nếu có → trả về book (có thể kèm id)
-    if book_id not in books:
+def get_book(book_id: int, db: Session = Depends(get_db)):
+    book = db.get(Book, book_id)
+    if not book:
         raise HTTPException(status_code=404, detail="Book not found")
-    return {"id": book_id, **books[book_id].model_dump()}
+    return book
 
 
 @app.post("/books", status_code=201)
-def create_book(book: Book):
-    # TODO: tạo book_id, gán books[book_id] = book, trả về kết quả
-    book_id = len(books) + 1
-    books[book_id] = book
-    return {"id": book_id, **book.model_dump()}
+def create_book(payload: BookCreate, db: Session = Depends(get_db)):
+    book = Book(**payload.model_dump())
+    db.add(book)
+    db.commit()
+    db.refresh(book)
+    return book
 
 
 @app.put("/books/{book_id}")
-def update_book(book_id: int, book: Book):
-    # TODO: kiểm tra book_id tồn tại; cập nhật books[book_id] = book
-    if book_id not in books:
+def update_book(book_id: int, payload: BookCreate, db: Session = Depends(get_db)):
+    book = db.get(Book, book_id)
+    if not book:
         raise HTTPException(status_code=404, detail="Book not found")
-    books[book_id] = book
-    return {"id": book_id, **book.model_dump()}
+    for key, value in payload.model_dump().items():
+        setattr(book, key, value)
+    db.commit()
+    db.refresh(book)
+    return book
 
 
 @app.delete("/books/{book_id}", status_code=204)
-def delete_book(book_id: int):
-    # TODO: kiểm tra book_id tồn tại; xóa khỏi books; return None
-    if book_id not in books:
+def delete_book(book_id: int, db: Session = Depends(get_db)):
+    book = db.get(Book, book_id)
+    if not book:
         raise HTTPException(status_code=404, detail="Book not found")
-    del books[book_id]
+    db.delete(book)
+    db.commit()
+    return None
