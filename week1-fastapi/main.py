@@ -16,6 +16,7 @@ class BookCreate(BaseModel):
     title: str
     author: str
     year: int
+    summary: str | None = None
 
 
 @app.get("/")
