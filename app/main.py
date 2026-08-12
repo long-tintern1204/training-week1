@@ -4,12 +4,18 @@ from app.admin import setup_admin
 from app.core.config import get_settings
 from app.db.database import Base
 from app.db.session import engine
+from app.api.routers import authors
+from app.models import Author
+
+
 
 settings = get_settings()
 app = FastAPI(title=settings.app_title)
 
 Base.metadata.create_all(bind=engine)
 setup_admin(app, engine)
+
+app.include_router(authors.router, prefix="/api/v1")
 
 
 @app.get("/")

@@ -1,0 +1,43 @@
+POST http://127.0.0.1:8000/api/v1/authors/
+Content-Type: application/json
+
+{
+  "name": "Nguyen Van A",
+  "bio": "Writer",
+  "country": "VN",
+  "birth_year": 1980
+}
+
+### Tên trống  - 422
+POST http://127.0.0.1:8000/api/v1/authors/
+Content-Type: application/json
+
+{
+  "bio": "Writer"
+}
+### Tên dài vượt quá ký tự - 422
+POST http://127.0.0.1:8000/api/v1/authors/
+Content-Type: application/json
+
+{
+  "name": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+  "bio": "Writer"
+}
+
+### Lấy dữ liệu - 200
+GET http://127.0.0.1:8000/api/v1/authors/
+
+### Lấy tác giả theo ID sai - 404 Not Found
+GET http://127.0.0.1:8000/api/v1/authors/99
+
+### Cập nhật tác giả (PUT) -> 200
+PUT http://127.0.0.1:8000/api/v1/authors/1
+Content-Type: application/json
+
+{
+  "name": "Nguyen Van A Updated",
+  "country": "JP"
+}
+
+### Xóa tác giả (DELETE) ->  204 No Content
+DELETE http://127.0.0.1:8000/api/v1/authors/1
