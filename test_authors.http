@@ -93,6 +93,14 @@ Content-Type: application/json
   "summary": "A handbook",
   "author_id": 2
 }
+### Validate Book: Thiếu trường bắt buộc (title) -> 422 Unprocessable Entity
+POST http://127.0.0.1:8000/api/v1/books/
+Content-Type: application/json
 
+{
+  "year": 2008,
+  "summary": "A handbook",
+  "author_id": 2
+}
 ### Xóa book(DELETE) ->  204 No Content
 DELETE http://127.0.0.1:8000/api/v1/books/3
