@@ -13,6 +13,8 @@ uvicorn app.main:app --reload
 - http://127.0.0.1:8000/admin
 - http://127.0.0.1:8000/docs
 
+
+```
 ├── alembic                   : Thư mục chứa công cụ quản lý sự thay đổi cấu trúc database (Migrations)
 │   ├── env.py                : Tệp cấu hình môi trường để kết nối mã nguồn với công cụ Alembic
 │   ├── script.py.mako        : Khuôn mẫu (Template) để Alembic sinh ra các file cập nhật database tự động
@@ -24,8 +26,9 @@ uvicorn app.main:app --reload
 │   ├── api                   : Tầng giao tiếp, nơi trực tiếp nhận các yêu cầu (Request) từ bên ngoài
 │   │   ├── __init__.py       : (File trống)
 │   │   └── routers           : Nơi định nghĩa các đường dẫn API cụ thể (ví dụ: GET /books, POST /books)
-│   │       └── __init__.py   : (File trống)
-│   │       └── authors.py    : Nơi tiếp nhận request và trả về response cho các API liên quan
+│   │       ├── __init__.py   : (File trống)
+│   │       ├── authors.py    : Nơi tiếp nhận request và trả về response cho các API liên quan đến Tác giả
+│   │       └── books.py      : Nơi tiếp nhận request và trả về response cho các API liên quan đến Sách
 │   ├── core                  : Tầng chứa các thành phần cốt lõi của toàn hệ thống
 │   │   ├── __init__.py       : (File trống)
 │   │   └── config.py         : Trung tâm quản lý cài đặt (đọc file .env, cấu hình bảo mật)
@@ -35,14 +38,18 @@ uvicorn app.main:app --reload
 │   │   └── session.py        : Tạo và quản lý các phiên làm việc (sessions) kết nối đến DB
 │   ├── main.py               : Điểm neo khởi chạy ứng dụng (nơi khởi tạo FastAPI và nhúng các routers)
 │   ├── models                : Nơi định nghĩa các bảng dữ liệu sẽ lưu vào database (SQLAlchemy ORM)
-│   │   └── __init__.py       : # Quản lý và xuất (export) các Models để các nơi khác (như Alembic) dễ dàng import
-|   |   └── author.py         : ORM Model đại diện cho bảng tác giả (chứa các cột id, name, bio...)
+│   │   ├── __init__.py       : Quản lý và xuất (export) các Models để các nơi khác (như Alembic) dễ dàng import
+│   │   ├── author.py         : ORM Model đại diện cho bảng tác giả (chứa các cột id, name, bio...)
+│   │   └── book.py           : ORM Model đại diện cho bảng sách (chứa các cột id, title, author_id...)
 │   ├── schemas               : Nơi xác thực, kiểm tra lỗi định dạng dữ liệu đầu vào và đầu ra (Pydantic)
-│   │   └── __init__.py       : (File trống)
-│   │   └── author.py         : Pydantic Schemas xác thực và định dạng dữ liệu API cho Tác giả
-│   └── services              : Tầng nghiệp vụ (chứa các đoạn code xử lý logic tinh toán phức tạp)
-│       └── __init__.py       : (File trống)
-│       └── author_service.py : Chứa logic nghiệp vụ (Business Logic) xử lý các thao tác CRUD (Thêm, Đọc, Sửa, Xóa) cho Tác giả
+│   │   ├── __init__.py       : (File trống)
+│   │   ├── author.py         : Pydantic Schemas xác thực và định dạng dữ liệu API cho Tác giả
+│   │   └── book.py           : Pydantic Schemas xác thực và định dạng dữ liệu API cho Sách
+│   └── services              : Tầng nghiệp vụ (chứa các đoạn code xử lý logic tính toán phức tạp)
+│       ├── __init__.py       : (File trống)
+│       ├── author_service.py : Chứa logic nghiệp vụ (Business Logic) xử lý các thao tác CRUD cho Tác giả
+│       └── book_service.py   : Chứa logic nghiệp vụ (Business Logic) xử lý các thao tác CRUD cho Sách
 ├── data                      : Thư mục chứa các tệp dữ liệu vật lý (cục bộ)
 │   └── books.db              : Tệp cơ sở dữ liệu SQLite chứa dữ liệu thực tế của ứng dụng
 └── requirements.txt          : Danh sách các thư viện cần cài đặt để chạy dự án (pip install -r ...)
+```

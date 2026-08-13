@@ -1,3 +1,8 @@
+### ==========================================
+### 1. KIỂM TRA VALIDATE API TÁC GIẢ (AUTHORS)
+### ==========================================
+
+### Happy case (Tạo tác giả thành công) -> 201 Created
 POST http://127.0.0.1:8000/api/v1/authors/
 Content-Type: application/json
 
@@ -7,15 +12,7 @@ Content-Type: application/json
   "country": "VN",
   "birth_year": 1980
 }
-
-### Tên trống  - 422
-POST http://127.0.0.1:8000/api/v1/authors/
-Content-Type: application/json
-
-{
-  "bio": "Writer"
-}
-### Tên dài vượt quá ký tự - 422
+### Validate: name quá dài (> 200 ký tự) -> 422
 POST http://127.0.0.1:8000/api/v1/authors/
 Content-Type: application/json
 
@@ -24,20 +21,78 @@ Content-Type: application/json
   "bio": "Writer"
 }
 
-### Lấy dữ liệu - 200
+### Validate: Sai kiểu dữ liệu birth_year -> 422
+POST http://127.0.0.1:8000/api/v1/authors/
+Content-Type: application/json
+
+{
+  "name": "Nguyen Van A",
+  "birth_year": "abc"
+}
+
+### ==========================================
+### 2. KIỂM TRA CRUD TÁC GIẢ (AUTHORS)
+### ==========================================
+
+### Lấy danh sách tác giả (GET list) -> 200 OK
 GET http://127.0.0.1:8000/api/v1/authors/
 
-### Lấy tác giả theo ID sai - 404 Not Found
+### Lấy tác giả theo ID đúng (GET by id) -> 200 OK
+GET http://127.0.0.1:8000/api/v1/authors/1
+
+### Lấy tác giả theo ID sai -> 404 Not Found
 GET http://127.0.0.1:8000/api/v1/authors/99
 
-### Cập nhật tác giả (PUT) -> 200
+
+### Cập nhật tác giả (PUT) -> 200 OK
 PUT http://127.0.0.1:8000/api/v1/authors/1
 Content-Type: application/json
 
 {
   "name": "Nguyen Van A Updated",
-  "country": "JP"
+  "bio": "Updated Writer",
+  "country": "JP",
+  "birth_year": 1997
 }
 
+
 ### Xóa tác giả (DELETE) ->  204 No Content
-DELETE http://127.0.0.1:8000/api/v1/authors/1
+DELETE http://127.0.0.1:8000/api/v1/authors/2 
+
+
+
+### ==========================================
+### 3. KIỂM TRA SÁCH (BOOKS)
+### ==========================================
+
+### Lấy danh sách sách -> 200 OK
+GET http://127.0.0.1:8000/api/v1/books/
+
+
+### Tạo sách mới (Gửi cả id và author_name) -> 201 Created
+POST http://127.0.0.1:8000/api/v1/books/
+Content-Type: application/json
+
+{
+  "id": 1,
+  "title": "Clean Code",
+  "year": 2008,
+  "summary": null,
+  "author_id": 2,
+  "author_name": "Robert C. Martin"
+}
+
+
+### Tạo sách mới (Chỉ gửi các trường bắt buộc) -> 201 Created
+POST http://127.0.0.1:8000/api/v1/books/
+Content-Type: application/json
+
+{
+  "title": "Clean Code",
+  "year": 2008,
+  "summary": "A handbook",
+  "author_id": 2
+}
+
+### Xóa book(DELETE) ->  204 No Content
+DELETE http://127.0.0.1:8000/api/v1/books/3
