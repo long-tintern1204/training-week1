@@ -1,0 +1,17 @@
+### Không param -> 200 
+GET http://127.0.0.1:8000/api/v1/search/books
+
+### Lọc theo author -> 200
+GET http://127.0.0.1:8000/api/v1/search/books?author_id=1
+
+### Lọc theo category -> 200
+GET http://127.0.0.1:8000/api/v1/search/books?category_id=1
+
+### Lọc theo khoảng năm -> 200
+GET http://127.0.0.1:8000/api/v1/search/books?year_from=2000&year_to=2020
+
+### Lọc theo title -> 200
+GET http://127.0.0.1:8000/api/v1/search/books?q=clean
+
+### Ghép nhiều điều kiện -> 200
+GET http://127.0.0.1:8000/api/v1/search/books?author_id=1&category_id=1&year_from=2000&year_to=2020&q=clean
