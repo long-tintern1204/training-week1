@@ -1,0 +1,34 @@
+### 1. Tạo author
+POST http://127.0.0.1:8000/api/v1/authors/
+Content-Type: application/json
+
+{
+  "name": "Author Test 409"
+}
+### 2. Tạo category
+POST http://127.0.0.1:8000/api/v1/categories/
+Content-Type: application/json
+
+{
+  "name": "Category Test 409"
+}
+### 3. Tạo book gắn đúng author_id/category_id vừa tạo
+POST http://127.0.0.1:8000/api/v1/books
+Content-Type: application/json
+
+{
+  "title": "Book Test 409",
+  "year": 2024,
+  "summary": "Book dùng để test chặn xóa",
+  "author_id": 1,
+  "category_id": 4
+}
+
+### Author đã gắn Book -> 409
+DELETE http://127.0.0.1:8000/api/v1/authors/1
+
+### Category đã gắn Book -> 409
+DELETE http://127.0.0.1:8000/api/v1/categories/4
+
+### Category không tồn tại -> 404
+DELETE http://127.0.0.1:8000/api/v1/categories/9999

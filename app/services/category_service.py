@@ -1,8 +1,8 @@
 from fastapi import HTTPException
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
-from app.models import Category
+from app.models import Category, Book
 from app.schemas.category import CategoryCreate, CategoryUpdate
 
 
@@ -42,5 +42,14 @@ def update_category(
 
 def delete_category(db: Session, category_id: int) -> None:
     category = get_category(db, category_id)
+    if category is None:
+        raise HTTPException(status_code=404, detail="Category not found")
+    stmt = select(func.count(Book.id)).where(Book.category_id == category_id)
+    book_count = db.scalar(stmt)
+    if book_count > 0:
+        raise HTTPException(
+            status_code=409, 
+            detail="Cannot delete category while books exist"
+        )
     db.delete(category)
     db.commit()
