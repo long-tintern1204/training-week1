@@ -1,6 +1,6 @@
 from sqladmin import Admin, ModelView
 
-from app.models import Author, Book
+from app.models import Author, Book, Category
 
 
 class AuthorAdmin(ModelView, model=Author):
@@ -18,14 +18,22 @@ class BookAdmin(ModelView, model=Book):
         Book.id,
         Book.title,
         Book.author_id,
+        Book.category_id,
         Book.summary,
         Book.year,
     ]
     name = "Book"
     name_plural = "Books"
+    
+
+class CategoryAdmin(ModelView, model=Category):
+    column_list = [Category.id, Category.name]
+    name = "Category"
+    name_plural = "Categories"
 
 def setup_admin(app, engine) -> Admin:
     admin = Admin(app, engine, title="Books Admin")
     admin.add_view(AuthorAdmin)
     admin.add_view(BookAdmin)
+    admin.add_view(CategoryAdmin)
     return admin

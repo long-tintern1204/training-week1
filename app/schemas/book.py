@@ -6,6 +6,7 @@ class BookCreate(BaseModel):
     year: int = Field(ge=1000, le=2100)
     summary: str | None = Field(default=None, max_length=500)
     author_id: int | None = None
+    category_id: int | None = None
     
 
 class BookUpdate(BaseModel):
@@ -13,6 +14,7 @@ class BookUpdate(BaseModel):
     year: int = Field(ge=1000, le=2100)
     summary: str | None = Field(default=None, max_length=500)
     author_id: int | None = None
+    category_id: int | None = None
     
     
 class BookRead(BaseModel):
@@ -22,3 +24,5 @@ class BookRead(BaseModel):
     summary: str | None = None
     author_id: int | None = None
     author_name: str | None = None
+    category_id: int | None = None
+    category_name: str | None = None

@@ -4,7 +4,7 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 from app.db.database import DATABASE_URL, Base
-from app.models import Author, Book
+from app.models import Author, Book, Category
 
 
 config = context.config
@@ -13,7 +13,16 @@ config.set_main_option("sqlalchemy.url", DATABASE_URL)
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
+naming_convention = {
+    "ix": "ix_%(column_0_label)s",
+    "uq": "uq_%(table_name)s_%(column_0_name)s",
+    "ck": "ck_%(table_name)s_%(constraint_name)s",
+    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+    "pk": "pk_%(table_name)s",
+}
+
 target_metadata = Base.metadata
+target_metadata.naming_convention = naming_convention
 
 
 def run_migrations_offline() -> None:

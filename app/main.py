@@ -4,8 +4,8 @@ from app.admin import setup_admin
 from app.core.config import get_settings
 from app.db.database import Base
 from app.db.session import engine
-from app.api.routers import authors, books
-from app.models import Author, Book
+from app.api.routers import authors, books, categories
+from app.models import Author, Book, Category
 
 
 
@@ -17,6 +17,7 @@ setup_admin(app, engine)
 
 app.include_router(authors.router, prefix="/api/v1")
 app.include_router(books.router, prefix="/api/v1")
+app.include_router(categories.router, prefix="/api/v1")
 
 
 @app.get("/")
