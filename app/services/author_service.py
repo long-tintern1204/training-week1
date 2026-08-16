@@ -38,8 +38,6 @@ def update_author(db: Session, author_id: int, payload: AuthorUpdate) -> Author:
 
 def delete_author(db: Session, author_id: int) -> None:
     author = get_author(db, author_id)
-    if author is None:
-        raise HTTPException(status_code=404, detail="Author not found")
     stmt = select(func.count(Book.id)).where(Book.author_id == author_id)
     book_count = db.scalar(stmt)
     if book_count > 0:

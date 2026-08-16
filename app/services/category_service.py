@@ -42,8 +42,6 @@ def update_category(
 
 def delete_category(db: Session, category_id: int) -> None:
     category = get_category(db, category_id)
-    if category is None:
-        raise HTTPException(status_code=404, detail="Category not found")
     stmt = select(func.count(Book.id)).where(Book.category_id == category_id)
     book_count = db.scalar(stmt)
     if book_count > 0:

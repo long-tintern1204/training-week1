@@ -7,6 +7,7 @@ class AuthorAdmin(ModelView, model=Author):
     column_list = [
         Author.id,
         Author.name,
+        Author.bio,
         Author.country,
         Author.birth_year,
     ]
