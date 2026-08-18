@@ -2,11 +2,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.admin import setup_admin
-from app.api.routers import books
+from app.api.routers import books, users
 from app.core.config import get_settings
 from app.db.database import Base
 from app.db.session import engine
-from app.models import Book  # noqa: F401
+from app.models import Book, User  # noqa: F401
 
 settings = get_settings()
 app = FastAPI(title=settings.app_title)
@@ -14,8 +14,8 @@ app = FastAPI(title=settings.app_title)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        # TODO: origin Vite `npm run dev` — localhost
-        # TODO: origin Vite `npm run dev` — 127.0.0.1
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -26,6 +26,7 @@ Base.metadata.create_all(bind=engine)
 setup_admin(app, engine)
 
 app.include_router(books.router, prefix="/api/v1")
+app.include_router(users.router, prefix="/api/v1")
 
 
 @app.get("/")
