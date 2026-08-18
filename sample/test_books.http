@@ -1,0 +1,12 @@
+### List books — 200, không cần token
+GET http://127.0.0.1:8000/api/v1/books
+
+### Create book (sample chưa bắt token; bài 4 sẽ ra 401 nếu thiếu Bearer)
+POST http://127.0.0.1:8000/api/v1/books
+Content-Type: application/json
+
+{
+  "title": "Clean Code",
+  "year": 2008,
+  "summary": "A handbook"
+}
