@@ -1,0 +1,45 @@
+@baseUrl = http://127.0.0.1:8000/api/v1
+
+### 1. Tạo user mới để chuẩn bị test login
+# Kỳ vọng: 201 Created (hoặc 409 nếu user đã tạo trước đó)
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "username": "alibobo113",
+  "password": "alibobo113",
+  "role": 1
+}
+
+### 2. Test Case 1: Login thành công (Đúng username và password)
+# Kỳ vọng: 200 OK
+# Body trả về: {"access_token": "ey...", "token_type": "bearer"}
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "alibobo113",
+  "password": "alibobo113"
+}
+
+### 3. Test Case 2: Login thất bại do SAI mật khẩu
+# Kỳ vọng: 401 Unauthorized
+# Body trả về: {"detail": "Incorrect username or password"}
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "minh_test",
+  "password": "wrongPassword"
+}
+
+### 4. Test Case 3: Login thất bại do KHÔNG TỒN TẠI username
+# Kỳ vọng: 401 Unauthorized (Cùng message và status code như Case 2)
+# Body trả về: {"detail": "Incorrect username or password"}
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "non_existing_user",
+  "password": "secretPassword123"
+}
