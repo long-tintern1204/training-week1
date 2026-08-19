@@ -29,7 +29,7 @@ POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "username": "minh_test",
+  "username": "alibobo113",
   "password": "wrongPassword"
 }
 
@@ -41,5 +41,5 @@ Content-Type: application/json
 
 {
   "username": "non_existing_user",
-  "password": "secretPassword123"
+  "password": "alibobo113"
 }

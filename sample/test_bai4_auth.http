@@ -1,0 +1,132 @@
+@baseUrl = http://127.0.0.1:8000/api/v1
+
+### 0.1 Tạo tài khoản Normal User (role = 1)
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "username": "normal_user",
+  "password": "password123",
+  "role": 1
+}
+
+### 0.2 Tạo tài khoản Admin (role = 0)
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "username": "admin_user",
+  "password": "password123",
+  "role": 0
+}
+
+### 0.3 Login lấy User Token
+# @name loginUser
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "normal_user",
+  "password": "password123"
+}
+
+### 0.4 Login lấy Admin Token
+# @name loginAdmin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin_user",
+  "password": "password123"
+}
+
+### Lưu token vào biến
+@userToken = {{loginUser.response.body.access_token}}
+@adminToken = {{loginAdmin.response.body.access_token}}
+
+
+# ========================================================
+# KIỂM TRA ROUTER BOOKS
+# ========================================================
+
+### 1. GET /books không header -> 200 OK
+GET {{baseUrl}}/books
+
+### 2. POST /books không header -> 401 Unauthorized
+POST {{baseUrl}}/books
+Content-Type: application/json
+
+{
+  "title": "Clean Code",
+  "author": "Robert C. Martin",
+  "price": 30
+}
+
+### 3. User POST Book -> 201 Created
+# @name createBook
+POST {{baseUrl}}/books
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "title": "Clean Code",
+  "author": "Robert C. Martin",
+  "price": 30,
+  "year": 2008
+}
+
+### Lưu bookId vừa tạo
+@bookId = {{createBook.response.body.id}}
+
+### 4. User PUT Book -> 200 OK
+PUT {{baseUrl}}/books/{{bookId}}
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "title": "Clean Code Updated",
+  "author": "Robert C. Martin",
+  "price": 35
+}
+
+### 5. User DELETE Book -> 403 Forbidden (sách vẫn còn trong DB)
+DELETE {{baseUrl}}/books/{{bookId}}
+Authorization: Bearer {{userToken}}
+
+### 6. Admin DELETE Book -> 204 No Content
+DELETE {{baseUrl}}/books/{{bookId}}
+Authorization: Bearer {{adminToken}}
+
+### 7. DELETE Book không token -> 401 Unauthorized
+DELETE {{baseUrl}}/books/1
+
+
+# ========================================================
+# KIỂM TRA ROUTER USERS
+# ========================================================
+
+### 8. GET /users không token -> 200 OK
+GET {{baseUrl}}/users
+
+### 9. PUT User không token -> 401 Unauthorized
+PUT {{baseUrl}}/users/1
+Content-Type: application/json
+
+{
+  "username": "updated_user",
+  "role": 1
+}
+
+### 10. User thường PUT/DELETE User khác -> 403 Forbidden
+PUT {{baseUrl}}/users/1
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "username": "updated_user",
+  "role": 1
+}
+
+### 11. Token sai/sửa 1 ký tự -> 401 Unauthorized
+GET {{baseUrl}}/books
+Authorization: Bearer {{userToken}}xxx-fake

@@ -30,7 +30,7 @@ def create_user(db: Session, payload: UserCreate) -> User:
     hashed_password = hash_password(payload.password)
     user = User(
         username=payload.username, 
-        hashed_password=hash_password(payload.password),
+        hashed_password=hash_password(),
         role=payload.role,
     )
     db.add(user)
