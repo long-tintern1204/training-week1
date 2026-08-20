@@ -29,8 +29,8 @@ def create_user(db: Session, payload: UserCreate) -> User:
         raise HTTPException(status_code=409, detail="Username already exists")
     hashed_password = hash_password(payload.password)
     user = User(
-        username=payload.username, 
-        hashed_password=hash_password(),
+        username=payload.username,
+        hashed_password=hashed_password,
         role=payload.role,
     )
     db.add(user)
@@ -61,8 +61,8 @@ def delete_user(db: Session, user_id: int) -> None:
     user = get_user(db, user_id)
     db.delete(user)
     db.commit()
-    
-    
+
+
 def login(db: Session, username: str, password: str) -> str:
     user = get_user_by_username(db, username)
     if user is None or not verify_password(password, user.hashed_password):
