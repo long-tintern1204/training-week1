@@ -1,3 +1,12 @@
+"""
+File: alembic/env.py
+Mục đích: Cấu hình môi trường thực thi cho công cụ quản lý phiên bản cơ sở dữ liệu Alembic.
+
+Liên kết với các file khác:
+- app/database.py: Lấy `DATABASE_URL`, `Base`, và `engine` để Alembic biết kết nối tới đâu và theo dõi metadata nào.
+- app/models: Nạp `Author` và `Book` để các model này được đăng ký vào `Base.metadata`.
+"""
+
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
@@ -5,43 +14,25 @@ from sqlalchemy import pool
 
 from alembic import context
 
+# Nạp thông tin kết nối và cấu trúc bảng từ mã nguồn ứng dụng
 from app.database import DATABASE_URL, Base, engine
 from app.models import Author, Book
 
-# this is the Alembic Config object, which provides
-# access to the values within the .ini file in use.
+# Đối tượng cấu hình của Alembic, đọc từ file alembic.ini
 config = context.config
 
-
-# Interpret the config file for Python logging.
-# This line sets up loggers basically.
+# Thiết lập hệ thống ghi log từ file cấu hình nếu có
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# add your model's MetaData object here
-# for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
+# Gán metadata của các Model vào target_metadata:
+# Nhờ dòng này, khi ta chạy `alembic revision --autogenerate`, Alembic sẽ tự động
+# so sánh cấu trúc trong các class Model với Database thực tế để sinh script migration
 target_metadata = Base.metadata
-
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
-# ... etc.
 
 
 def run_migrations_offline() -> None:
-    """Run migrations in 'offline' mode.
-
-    This configures the context with just a URL
-    and not an Engine, though an Engine is acceptable
-    here as well.  By skipping the Engine creation
-    we don't even need a DBAPI to be available.
-
-    Calls to context.execute() here emit the given string to the
-    script output.
-
-    """
+    """Chạy migration ở chế độ 'offline' (không cần engine kết nối trực tiếp, chỉ sinh câu lệnh SQL)."""
     url = DATABASE_URL
     context.configure(
         url=url,
@@ -56,20 +47,20 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
-    """Run migrations in 'online' mode.
-
-    In this scenario we need to create an Engine
-    and associate a connection with the context.
-
-    """
+    """Chạy migration ở chế độ 'online' (kết nối trực tiếp đến Database và thực thi thay đổi)."""
     connectable = engine
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata,render_as_batch=True,)
+        context.configure(
+            connection=connection,
+            target_metadata=target_metadata,
+            render_as_batch=True,
+        )
 
         with context.begin_transaction():
             context.run_migrations()
 
 
+# Kiểm tra chế độ chạy (Offline hay Online) để gọi hàm tương ứng
 if context.is_offline_mode():
     run_migrations_offline()
 else:
